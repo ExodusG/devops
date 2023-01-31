@@ -1,5 +1,18 @@
 version: "3.4"
 services:
+  vault:
+    image: vault
+    container_name: vault
+    ports:
+      - "8200:8200"
+    restart: always
+    volumes:
+      - ./volumes/logs:/vault/logs
+      - ./volumes/file:/vault/file
+      - ./volumes/config:/vault/config
+    cap_add:
+      - IPC_LOCK
+    entrypoint: vault server -config=/vault/config/vault.json
 
   fr-admin-db:
     image: postgres
@@ -21,7 +34,7 @@ services:
       context: ./nest/
       dockerfile: Dockerfile
       target: development
-    volumes: #for hot reloading
+    volumes: 
       - ./nest/:/usr/src/app
     command: npm run start:dev
     env_file:
